@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
+using StardewValley;
 
 namespace bwdyworks
 {
     public class ModUtil
     {
         public StardewModdingAPI.Mod Mod;
+        public Random RNG = new Random(DateTime.Now.Millisecond * DateTime.Now.GetHashCode());
 
         public ModUtil(StardewModdingAPI.Mod mod)
         {
@@ -34,6 +37,33 @@ namespace bwdyworks
             Mod.Monitor.Log(Mod.ModManifest.Name + " reporting in." + (debug ? " (debug mode)" : ""));
             utilactive = true;
             return true;
+        }
+
+        public void WarpNPC(NPC npc, string l, Point p)
+        {
+            WarpNPC(npc, Game1.getLocationFromName(l), p.X, p.Y);
+        }
+
+        public void WarpNPC(NPC npc, string l, int tileX, int tileY)
+        {
+            WarpNPC(npc, Game1.getLocationFromName(l), tileX, tileY);
+        }
+
+        public void WarpNPC(NPC npc, GameLocation l, Point p)
+        {
+            WarpNPC(npc, l, p.X, p.Y);
+        }
+
+        public void WarpNPC(NPC npc, GameLocation l, int tileX, int tileY)
+        {
+            if (l != npc.currentLocation)
+            {
+                npc.currentLocation.characters.Remove(npc);
+                l.characters.Add(npc);
+                npc.currentLocation = l;
+            }
+            npc.setTilePosition(tileX, tileY);
+            Mod.Monitor.Log("Warped " + npc.Name + " to " + l.Name + " at " + tileX + ", " + tileY);
         }
 
         public void AddItem(BasicItemEntry entry)
