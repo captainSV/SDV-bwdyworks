@@ -63,7 +63,7 @@ namespace bwdyworks
                 npc.currentLocation = l;
             }
             npc.setTilePosition(tileX, tileY);
-            Mod.Monitor.Log("Warped " + npc.Name + " to " + l.Name + " at " + tileX + ", " + tileY);
+            //Mod.Monitor.Log("Warped " + npc.Name + " to " + l.Name + " at " + tileX + ", " + tileY);
         }
 
         public void AddItem(BasicItemEntry entry)

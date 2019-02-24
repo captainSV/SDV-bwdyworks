@@ -37,7 +37,7 @@ namespace bwdyworks
                 if (!ItemRegistry.Loaded) ItemRegistry.Load();
                 Mod.Instance.Monitor.Log("editing springobjects");
                 var oldTex = asset.AsImage().Data;
-                if (oldTex.Width != 4096) //only if JsonAssets didn't beat us to it
+                if (oldTex.Width < 4096) //only if JsonAssets didn't beat us to it
                 {
                     Texture2D newTex = new Texture2D(StardewValley.Game1.graphics.GraphicsDevice, oldTex.Width, System.Math.Max(oldTex.Height, 4096));
                     asset.ReplaceWith(newTex);
