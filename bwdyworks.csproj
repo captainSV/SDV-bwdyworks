@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicItemEntry.cs" />
+    <Compile Include="GameDate.cs" />
     <Compile Include="ItemRegistry.cs" />
     <Compile Include="ModUtilAssets.cs" />
     <Compile Include="MonsterLootEntry.cs" />

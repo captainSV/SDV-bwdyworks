@@ -39,6 +39,49 @@ namespace bwdyworks
             return true;
         }
 
+        //attempt to return the name of every character in the game in a list
+        public HashSet<string> GetAllCharacterNames(bool onlyDateable = false, bool onlyVillager = false, GameLocation onlyThisLocation = null)
+        {
+            HashSet<string> characters = new HashSet<string>(); //hashset ensures only unique values exist
+            if(onlyThisLocation != null)
+            {
+                foreach (var c in onlyThisLocation.characters)
+                {
+                    if (!string.IsNullOrWhiteSpace(c.Name))
+                    {
+                        if (!onlyVillager || c.isVillager())
+                            if (!onlyDateable || c.datable.Value) characters.Add(c.Name);
+                    }
+                }
+                return characters; //only checking the one location
+            }
+            //start with NPCDispositions
+            Dictionary<string, string> dictionary = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
+            foreach (string s in dictionary.Keys)
+            {
+                var c = Game1.getCharacterFromName(s, onlyVillager);
+                if (c != null) //simple nullcheck to ensure they weren't removed
+                {
+                    if (!onlyDateable || c.datable.Value)
+                        if (!string.IsNullOrWhiteSpace(c.Name))
+                            characters.Add(c.Name); 
+                }
+            }
+            //iterate locations for mod-added NPCs that aren't in the data
+            foreach(var loc in Game1.locations)
+                foreach (var c in loc.characters)
+                {
+                    if (!string.IsNullOrWhiteSpace(c.Name))
+                    {
+                        if (!onlyVillager|| c.isVillager())
+                            if (!onlyDateable || c.datable.Value) characters.Add(c.Name);
+                    }
+                }
+                    
+            //return the list
+            return characters;
+        }
+
         public void WarpNPC(NPC npc, string l, Point p)
         {
             WarpNPC(npc, Game1.getLocationFromName(l), p.X, p.Y);
@@ -153,10 +196,22 @@ namespace bwdyworks
             else return 0;
         }
 
+        public FriendshipStatus GetFriendshipStatus(string NPC)
+        {
+            if (!Game1.player.friendshipData.ContainsKey(NPC)) Game1.player.friendshipData[NPC] = new Friendship(0);
+            return Game1.player.friendshipData[NPC].Status;
+        }
+
+        public void SetFriendshipStatus(string NPC, FriendshipStatus status)
+        {
+            if (!Game1.player.friendshipData.ContainsKey(NPC)) Game1.player.friendshipData[NPC] = new Friendship(0);
+            Game1.player.friendshipData[NPC].Status = status;
+        }
+
         public void SetFriendshipPoints(string NPC, int points)
         {
-            StardewValley.Farmer f2 = StardewValley.Game1.player;
-            if (!f2.friendshipData.ContainsKey(NPC)) f2.friendshipData[NPC] = new StardewValley.Friendship(points);
+            Farmer f2 = Game1.player;
+            if (!f2.friendshipData.ContainsKey(NPC)) f2.friendshipData[NPC] = new Friendship(points);
             else f2.friendshipData[NPC].Points = points;
         }
 
