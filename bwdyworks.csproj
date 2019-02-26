@@ -51,12 +51,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Items.cs" />
+    <Compile Include="API\Menus.cs" />
+    <Compile Include="API\NPCs.cs" />
+    <Compile Include="API\Player.cs" />
+    <Compile Include="AssetEditor.cs" />
     <Compile Include="BasicItemEntry.cs" />
     <Compile Include="GameDate.cs" />
-    <Compile Include="ItemRegistry.cs" />
-    <Compile Include="ModUtilAssets.cs" />
+    <Compile Include="Registry\ItemRegistry.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Modworks.cs" />
     <Compile Include="MonsterLootEntry.cs" />
-    <Compile Include="ModUtil.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

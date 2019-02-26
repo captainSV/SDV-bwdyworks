@@ -3,7 +3,7 @@ using System.Reflection;
 
 //a simple mod wrapper for logging purposes.
 //the real magic is the bwdymod class.
-
+using bwdyworks.Registry;
 
 namespace bwdyworks
 {
@@ -14,13 +14,11 @@ namespace bwdyworks
 #else
         private static readonly bool DEBUG = false;
 #endif
-        public static Mod Instance;
-        internal ModUtilAssets assets = new ModUtilAssets();
+
         public override void Entry(IModHelper helper)
         {
-            Instance = this;
+            Modworks.Startup(this);
             Monitor.Log("bwdy here! let's have some fun <3 " + Assembly.GetEntryAssembly().GetName().Version.ToString() + (DEBUG ? " (DEBUG MODE ACTIVE)":""));
-            Helper.Content.AssetEditors.Add(assets);
             Helper.Events.GameLoop.Saving += GameLoop_Saving;
         }
 

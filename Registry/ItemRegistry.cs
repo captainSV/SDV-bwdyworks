@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace bwdyworks
+namespace bwdyworks.Registry
 {
     public static class ItemRegistry
     {
@@ -14,9 +14,9 @@ namespace bwdyworks
         internal static bool Loaded = false;
         private static int BaseItemId;
 
-        internal static void RegisterItem(StardewModdingAPI.Mod mod, BasicItemEntry itemdata)
+        internal static void RegisterItem(string module, BasicItemEntry itemdata)
         {
-            string globalid = mod.ModManifest.UniqueID + ":" + itemdata.InternalName;
+            string globalid = module + ":" + itemdata.InternalName;
             GlobalRegistry[globalid] = itemdata;
         }
 
@@ -24,11 +24,11 @@ namespace bwdyworks
         {
             Loaded = true;
             BaseItemId = 1600; //reset the base item id
-            LocalRegistry = Mod.Instance.Helper.Data.ReadJsonFile<ItemRegistrySaveDataModel>("bwdyItemIds.json");
+            LocalRegistry = Modworks.Helper.Data.ReadJsonFile<ItemRegistrySaveDataModel>("ModworksRegistry.json");
             if (LocalRegistry == null) {
                 LocalRegistry = new ItemRegistrySaveDataModel();
-                Mod.Instance.Monitor.Log("Item registry created.");
-            } else Mod.Instance.Monitor.Log("Item registry loaded.");
+                Modworks.Log.Trace("Item registry created.");
+            } else Modworks.Log.Trace("Item registry loaded.");
             foreach (KeyValuePair<string, BasicItemEntry> entry in GlobalRegistry)
             {
                 int integerId;
@@ -40,14 +40,14 @@ namespace bwdyworks
                 entry.Value.GlobalId = entry.Key;
                 LocalRegistry.RegisteredItemIds[entry.Key] = integerId;
                 RegisteredItems[integerId] = entry.Value;
-                Mod.Instance.Monitor.Log("Registered item configured: " + entry.Value.GlobalId);
+                Modworks.Log.Trace("Registered item configured: " + entry.Value.GlobalId);
             }
         }
 
         internal static void Save()
         {
-            Mod.Instance.Monitor.Log("Item registry saved.");
-            Mod.Instance.Helper.Data.WriteJsonFile("bwdyItemIds.json", LocalRegistry);
+            Modworks.Log.Trace("Item registry saved.");
+            Modworks.Helper.Data.WriteJsonFile("bwdyItemIds.json", LocalRegistry);
         }
     }
 

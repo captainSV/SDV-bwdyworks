@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using System;
+using System.Collections.Generic;
+using bwdyworks.Registry;
 
 namespace bwdyworks
 {
-    class ModUtilAssets : StardewModdingAPI.IAssetEditor
+    internal class AssetEditor : IAssetEditor
     {
         internal List<MonsterLootEntry> MonsterLoot = new List<MonsterLootEntry>();
 
@@ -18,14 +19,14 @@ namespace bwdyworks
                 "Data\\ObjectInformation"
             };
             string assetName = asset.AssetName;
-            return Array.Exists(assetsToEdit, delegate(string s){ return s.Equals(assetName); });
+            return Array.Exists(assetsToEdit, delegate (string s) { return s.Equals(assetName); });
         }
 
         public void Edit<T>(IAssetData asset)
         {
             if (asset.AssetNameEquals("Data\\Monsters"))
             {
-                Mod.Instance.Monitor.Log("editing monsters");
+                Modworks.Log.Trace("editing monsters");
                 var data = asset.AsDictionary<string, string>().Data;
                 foreach (MonsterLootEntry mle in MonsterLoot)
                 {
@@ -35,7 +36,7 @@ namespace bwdyworks
             else if (asset.AssetNameEquals("Maps\\springobjects"))
             {
                 if (!ItemRegistry.Loaded) ItemRegistry.Load();
-                Mod.Instance.Monitor.Log("editing springobjects");
+                Modworks.Log.Trace("editing springobjects");
                 var oldTex = asset.AsImage().Data;
                 if (oldTex.Width < 4096) //only if JsonAssets didn't beat us to it
                 {
@@ -49,29 +50,29 @@ namespace bwdyworks
                     try
                     {
                         asset.AsImage().PatchImage(bie.LoadTexture(), null, new Microsoft.Xna.Framework.Rectangle(bie.IntegerId % 24 * 16, bie.IntegerId / 24 * 16, 16, 16));
-                        Mod.Instance.Monitor.Log("Installed texture for custom item: " + bie.GlobalId);
+                        Modworks.Log.Trace("Installed texture for custom item: " + bie.GlobalId);
                     }
                     catch (Exception e)
                     {
-                        Mod.Instance.Monitor.Log("Failed to install texture for custom item: " + bie.GlobalId + "\n" + e.Message);
+                        Modworks.Log.Error("Failed to install texture for custom item: " + bie.GlobalId + "\n" + e.Message);
                     }
                 }
             }
             else if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
                 if (!ItemRegistry.Loaded) ItemRegistry.Load();
-                Mod.Instance.Monitor.Log("editing objectinformation");
+                Modworks.Log.Trace("editing objectinformation");
                 foreach (int i in ItemRegistry.LocalRegistry.RegisteredItemIds.Values)
                 {
                     BasicItemEntry bie = ItemRegistry.RegisteredItems[i];
                     try
                     {
                         asset.AsDictionary<int, string>().Data.Add(bie.IntegerId, bie.Compile());
-                        Mod.Instance.Monitor.Log("Installed data for custom item: " + bie.GlobalId);
+                        Modworks.Log.Trace("Installed data for custom item: " + bie.GlobalId);
                     }
                     catch (Exception e)
                     {
-                        Mod.Instance.Monitor.Log("Failed to install data for custom item: " + bie.GlobalId + "\n" + e.Message);
+                        Modworks.Log.Error("Failed to install data for custom item: " + bie.GlobalId + "\n" + e.Message);
                     }
                 }
             }
@@ -79,14 +80,14 @@ namespace bwdyworks
 
         private bool AddMonsterLootEntry(IDictionary<string, string> monsterdata, MonsterLootEntry entry)
         {
-            if(monsterdata == null)
+            if (monsterdata == null)
             {
-                Mod.Instance.Monitor.Log("Attempted to add monster data to null asset!", LogLevel.Error);
+                Modworks.Log.Error("Attempted to add monster data to null asset!");
                 return false;
             }
-            if(!monsterdata.ContainsKey(entry.MonsterID))
+            if (!monsterdata.ContainsKey(entry.MonsterID))
             {
-                Mod.Instance.Monitor.Log("Could not identify a monster with id: " + entry.MonsterID, LogLevel.Error);
+                Modworks.Log.Error("Failed to add monster loot:\nCould not identify a monster with id: " + entry.MonsterID);
                 return false;
             }
             try
@@ -104,10 +105,12 @@ namespace bwdyworks
                 monsterdata[entry.MonsterID] = monsterCompiled;
                 return true;
             }
-            catch (Exception e){
-                Mod.Instance.Monitor.Log("Error while adding monster loot entry: " + e.Message, LogLevel.Error);
+            catch (Exception e)
+            {
+                Modworks.Log.Error("Error while adding monster loot entry: " + e.Message);
                 return false;
             }
         }
+
     }
 }
