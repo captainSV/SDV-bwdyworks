@@ -79,5 +79,25 @@ namespace bwdyworks.API
             npc.setTilePosition(tileX, tileY);
             //Mod.Monitor.Log("Warped " + npc.Name + " to " + l.Name + " at " + tileX + ", " + tileY);
         }
+
+        public bool IsPathing(NPC npc)
+        {
+            if (npc.controller == null) return false;
+            if (npc.controller.endPoint == null) return false;
+            if (npc.controller.endPoint == Utility.Vector2ToPoint(npc.Position)) return false;
+            return true;
+        }
+
+        public Rectangle GetActivationBoundingBox(NPC npc)
+        {
+            if (npc.Sprite == null) return Rectangle.Empty;
+            return new Rectangle((int)npc.Position.X + 8, (int)npc.Position.Y, npc.Sprite.SpriteWidth * 4 * 3 / 4, 48);
+        }
+
+        public Rectangle GetCollisionBoundingBox(NPC npc)
+        {
+            if (npc.Sprite == null) return Rectangle.Empty;
+            return new Rectangle((int)npc.Position.X + 8, (int)npc.Position.Y + 16, npc.Sprite.SpriteWidth * 4 * 3 / 4, 32);
+        }
     }
 }

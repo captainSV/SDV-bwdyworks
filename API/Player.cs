@@ -64,6 +64,17 @@ namespace bwdyworks.API
             return new int[] { f.getTileX(), f.getTileY() };
         }
 
+        public void ForceOfferEatHeldItem()
+        {
+            //should work even for non-edibles
+            Game1.player.faceDirection(2);
+            Game1.player.isEating = true;
+            Game1.player.itemToEat = Game1.player.ActiveObject;
+            Game1.player.FarmerSprite.setCurrentSingleAnimation(304);
+            Game1.currentLocation.createQuestionDialogue((Game1.objectInformation[Game1.player.ActiveObject.ParentSheetIndex].Split('/').Length > 6 && Game1.objectInformation[Game1.player.ActiveObject.ParentSheetIndex].Split('/')[6].Equals("drink")) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:Game1.cs.3159", Game1.player.ActiveObject.DisplayName) : Game1.content.LoadString("Strings\\StringsFromCSFiles:Game1.cs.3160", Game1.player.ActiveObject.DisplayName), Game1.currentLocation.createYesNoResponses(), "Eat");
+        }
+
+
         public int[] GetFacingTileCoordinate()
         {
             var f = Game1.player;

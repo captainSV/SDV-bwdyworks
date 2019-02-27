@@ -44,6 +44,18 @@ namespace bwdyworks
             get { return _Menus; }
         }
 
+        internal static API.Locations _Locations;
+        public static API.Locations Locations
+        {
+            get { return _Locations; }
+        }
+
+        internal static API.Events _Events;
+        public static API.Events Events
+        {
+            get { return _Events; }
+        }
+
         private static HashSet<string> Modules;
 
         internal static void Startup(Mod bwdyworks)
@@ -61,6 +73,8 @@ namespace bwdyworks
             _Player = new API.Player();
             _Items = new API.Items();
             _Menus = new API.Menus();
+            _Locations = new API.Locations();
+            _Events = new API.Events();
         }
 
         public static bool InstallModule(string id, bool debug)
